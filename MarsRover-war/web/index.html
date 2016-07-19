@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Mars Rover Project</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <style>
+
+            body {
+                background-image: url("https://img-new.cgtrader.com/items/140799/mars_landscape_3d_model_fbx_obj_blend_mtl_220e7b37-3d60-430f-8a89-adcfc023cb32.png");
+                background-repeat: repeat-y;
+
+            }
+
+            h1, h2, p{ 
+                font-family: times, Times New Roman, times-roman, georgia, serif;
+                color: #ffffcc;
+                margin: 0;
+                padding: 2px 2px 6px 2px;
+                font-weight: bold;
+            }
+            h1{
+                padding-top: 50px;
+                font-size: 50px;
+                padding-bottom: 100px;
+            }
+            h2 {
+                allign-text:center;
+                margin: 50px;
+                font-size: 30px;
+            }
+
+
+
+            .flex{
+                justify-content: center;
+                text-align: center;
+                display: flex;
+                flex-basis: auto;
+                flex-direction: row ;
+                flex-wrap: wrap;
+                padding-bottom: 50px;
+            }
+            div{
+                padding:0px 30px 0 30px;
+                allign-text:center;
+            }
+
+            .button {
+                background-color: #4CAF50; /* Green */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 12px;
+                border: 2px solid #4CAF50; /* Green */
+
+            }
+            .button {
+                -webkit-transition-duration: 1s; /* Safari */
+                transition-duration: 1s;
+
+            }
+
+            .button:hover {
+                background-color: white; /* Green */
+                color: #4CAF50;
+            }
+
+            #buttonId {
+                margin: 0;
+                padding: 0;
+            }
+
+            #p1{
+                font-family: Gill Sans, Verdana;
+                font-size: 15px;
+                line-height: 14px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: bold;
+                margin-top: 30px;
+            }
+            #p2-1,#p2-2{
+                font-family: Gill Sans, Verdana;
+                font-size: 13px;
+                line-height: 14px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                font-weight: bold;
+                margin: 10px;
+                text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
+
+                color: #ffccff;
+            }
+
+            table {
+                padding-top: 20%;
+            }
+
+        </style>
+    </head>
+    <body id="test">
+        <h1 style="text-align: center;">Mars Rover Project</h1>
+        <div class="flex">
+            <div id="main">
+
+                <h2>WebCam</h2>
+                <img id="screen" src="https://www.apertus.org/sites/default/files/bart_os.gif" alt="Webcam" width="320" height="240">
+
+            </div>
+            <div id="direction">
+                <h2>Directions</h2>
+
+                <table> 
+                    <tr>
+                        <th></th>
+                        <th><p id="buttonId"><button class="button" accesskey="W" onclick="send(87)"> Front</button></p></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <th><p id="buttonId"><button class="button"  accesskey="A" onclick="testIt(65)"> Left</button></p></th>
+                        <th><p id="buttonId"><button class="button" accesskey="S" onclick="testIt(44)"> Back</button></p></th>
+                        <th> <p id="buttonId"><button class="button" accesskey="D" onclick="testIt(83)"> Right</button></p></th>
+
+                    </tr>                               
+                </table>                
+            </div>
+            <div id="sensor">
+                <h2 id="sensor"> Sensor Values</h2>
+                <p id="space"></p>
+                <p id ="p1">Temperature: </p>
+                <p id ="p2-1" >25 degrees</p>
+                <p id = "p1">Distance: </p>
+                <p id ="p2-2">20 meters</p>
+            </div>
+
+        </div>
+        <script>
+            function send(e) {
+                testIt(e)
+            }
+            function testIt(e) {
+                if (e.which == 87 || e.which == 119 || e == 87) {
+                    console.log("W");
+                    sendButtonValue("W");
+                } else if (e.which == 65 || e.which == 97 || e == 65) {
+                    console.log("A");
+                    sendButtonValue("A");
+                } else if (e.which == 83 || e.which == 115 || e == 83) {
+                    console.log("S");
+                    sendButtonValue("S");
+                } else if (e.which == 44 || e.which == 100 || e == 44) {
+                    console.log("D");
+                    sendButtonValue("D");
+                } else {
+                }
+            }
+            function sendButtonValue(buttonCommand) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("GET", "http://45.55.210.200:8080/MarsRover-war/SaveValueOfMove?moveValue=" + buttonCommand, true);
+                xhttp.send();
+            }
+            var res;
+            function updateScreen() {
+                var xhttp = new XMLHttpRequest();
+//                xhttp.open("GET", "http://104.236.41.39:8080/MarsRover-war/UpdateImage", true);
+//                xhttp.send();
+                $("#screen").attr('src', 'http://45.55.210.200:8080/MarsRover-war/SendImageServlet?' + new Date().getTime());
+
+                httpGetAsync('http://45.55.210.200:8080/MarsRover-war/sendDistanceTemperatureToWeb', function (data) {
+                    res = data.split(",");
+                    console.log(res);
+                    document.getElementById('p2-1').innerHTML = res[0] + " degrees";
+                    document.getElementById('p2-2').innerHTML = res[1] + " meters";
+
+                });
+
+            }
+
+            function httpGetAsync(theUrl, callback) { //theURL or a path to file
+                var httpRequest = new XMLHttpRequest();
+                httpRequest.onreadystatechange = function () {
+                    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                        var data = httpRequest.responseText;  //if you fetch a file you can JSON.parse(httpRequest.responseText)
+                        if (callback) {
+                            callback(data);
+                        }
+                    }
+                };
+
+                httpRequest.open('GET', theUrl, true);
+                httpRequest.send(null);
+            }
+
+
+
+            $("#test").keypress(function (e) {
+                testIt(e)
+            });
+            window.setInterval(updateScreen, 750);
+
+        </script>
+    </body>
+</html>
+
+
+
+
+
+
+
+
